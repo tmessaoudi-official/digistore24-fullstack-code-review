@@ -57,7 +57,7 @@ openapi.yaml
 - Git history is important. Make sure to commit your changes as you progress.
 - Feel free to ask questions if you have any doubts.
 - We are looking for a clean, well-structured solution that demonstrates your understanding of the technologies used.
-- It is not expected to work on this 7 days within fulltime!
+- The task is only about seeing your skills, nothing more. It is therefore not to be expected that you will work full-time on these 7 days.
 
 ## Deliverables
 
