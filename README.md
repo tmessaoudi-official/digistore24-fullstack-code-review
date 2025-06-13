@@ -57,6 +57,7 @@ openapi.yaml
 - Git history is important. Make sure to commit your changes as you progress.
 - Feel free to ask questions if you have any doubts.
 - We are looking for a clean, well-structured solution that demonstrates your understanding of the technologies used.
+- It is not expected to work on this 7 days within fulltime!
 
 ## Deliverables
 
@@ -65,6 +66,7 @@ openapi.yaml
     - drop the files anywhere and send us the link
     - upload the code to your own Repository (Avoid forking the repository and creating a PR, as this would make your solution visible to others)
 - [ ] A brief report summarizing the changes you made, why, and **any additional recommendations if they had more time**.
+- [ ] Approximate indication of how many hours you worked for this
 
 ## Run instructions
 
