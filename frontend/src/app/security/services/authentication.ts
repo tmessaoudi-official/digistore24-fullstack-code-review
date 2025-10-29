@@ -1,7 +1,7 @@
 import { inject, Injectable, signal, WritableSignal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map, mergeMap, Observable, tap } from 'rxjs';
-import { AuthenticationResponse, LoginCredentials, RegisterRequest, User } from '@/app/models/user';
+import { AuthenticationResponse, LoginCredentials, RegisterRequest, User } from '@/app/security/models/user';
 import { environment } from '@/environments/environment';
 
 
