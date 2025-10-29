@@ -1,6 +1,6 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, signal, WritableSignal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, map, mergeMap, Observable, tap } from 'rxjs';
+import { map, mergeMap, Observable, tap } from 'rxjs';
 import { AuthenticationResponse, LoginCredentials, RegisterRequest, User } from '@/app/models/user';
 import { environment } from '@/environments/environment';
 
@@ -11,12 +11,12 @@ import { environment } from '@/environments/environment';
 export class Authentication {
   private readonly TOKEN_KEY = 'auth_token';
   private readonly USER_KEY = 'current_user';
-  
-  private currentUserSubject = new BehaviorSubject<User | null>(this.getUserFromStorage());
-  public currentUser$ = this.currentUserSubject.asObservable();
 
-  private isAuthenticatedSubject = new BehaviorSubject<boolean>(this.hasToken());
-  public isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
+  private currentUserSubject: WritableSignal<User | null> = signal<User | null>(this.getUserFromStorage());
+  public currentUser$ = this.currentUserSubject.asReadonly();
+
+  private isAuthenticatedSubject: WritableSignal<boolean> = signal<boolean>(this.hasToken());
+  public isAuthenticated$ = this.isAuthenticatedSubject.asReadonly();
 
   private http: HttpClient = inject(HttpClient);
 
@@ -30,7 +30,7 @@ export class Authentication {
         tap(response => {
           if (response.token) {
             this.setToken(response.token);
-            this.isAuthenticatedSubject.next(true);
+            this.isAuthenticatedSubject.update((_value) => true);
           }
         }),
         mergeMap(response => {
@@ -59,8 +59,8 @@ export class Authentication {
   public logout(): void {
     localStorage.removeItem(this.TOKEN_KEY);
     localStorage.removeItem(this.USER_KEY);
-    this.currentUserSubject.next(null);
-    this.isAuthenticatedSubject.next(false);
+    this.currentUserSubject.update((_value) => null);
+    this.isAuthenticatedSubject.update((_value) => false);
   }
 
   public getToken(): string | null {
@@ -71,17 +71,13 @@ export class Authentication {
     return !!this.getToken();
   }
 
-  public getCurrentUser(): User | null {
-    return this.currentUserSubject.value;
-  }
-
   private setToken(token: string): void {
     localStorage.setItem(this.TOKEN_KEY, token);
   }
 
   private setUser(user: User): void {
     localStorage.setItem(this.USER_KEY, JSON.stringify(user));
-    this.currentUserSubject.next(user);
+    this.currentUserSubject.update((_value) => user);
   }
 
   private getUserFromStorage(): User | null {
