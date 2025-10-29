@@ -30,5 +30,6 @@ describe('App', () => {
   it(`should have the 'Chat' title`, () => {
     const fixture = TestBed.createComponent(App);
     const app = fixture.componentInstance;
+    expect(app).toBeTruthy();
   });
 });
