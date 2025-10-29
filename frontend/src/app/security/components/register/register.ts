@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, inject, OnDestroy, signal, WritableSignal } from '@angular/core';
+import { Component, inject, OnDestroy, signal, WritableSignal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -11,7 +11,7 @@ import { Subject, takeUntil } from 'rxjs';
   templateUrl: './register.html',
   styleUrls: ['./register.scss']
 })
-export class Register implements OnDestroy, AfterViewInit {
+export class Register implements OnDestroy {
   public registerForm: FormGroup;
   public errorMessage: WritableSignal<string> = signal<string>('');
   public successMessage: WritableSignal<string> = signal<string>('');
@@ -34,12 +34,6 @@ export class Register implements OnDestroy, AfterViewInit {
         Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[#~@$!%*?&])[A-Za-z\d#~@$!%*?&]{8,}$/)
       ]]
     });
-  }
-
-  public ngAfterViewInit(): void {
-    if (this.authenticationService.isAuthenticated$() || this.authenticationService.hasToken()) {
-      this.router.navigate(['/chatbot']);
-    }
   }
 
   onSubmit(): void {

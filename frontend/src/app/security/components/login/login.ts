@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, inject, OnDestroy, signal, WritableSignal } from '@angular/core';
+import { Component, inject, OnDestroy, signal, WritableSignal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -11,7 +11,7 @@ import { Subject, takeUntil } from 'rxjs';
   templateUrl: './login.html',
   styleUrls: ['./login.scss']
 })
-export class Login implements OnDestroy, AfterViewInit {
+export class Login implements OnDestroy {
   public loginForm: FormGroup;
   public errorMessage: WritableSignal<string> = signal<string>('');
   public isLoading: WritableSignal<boolean> = signal<boolean>(false);
@@ -28,12 +28,6 @@ export class Login implements OnDestroy, AfterViewInit {
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required]]
     });
-  }
-
-  public ngAfterViewInit(): void {
-    if (this.authenticationService.isAuthenticated$() || this.authenticationService.hasToken()) {
-      this.router.navigate(['/chatbot']);
-    }
   }
 
   public onSubmit(): void {
