@@ -1,0 +1,27 @@
+<div class="space-y-2">
+  <div class="flex justify-between items-center mb-4">
+    <h2 class="text-xl font-semibold text-gray-800">Messages</h2>
+    <button (click)="refreshMessages()" [disabled]="loading()"
+      class="px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-gray-400 transition-colors">
+      {{ loading() ? 'Loading...' : 'Refresh' }}
+    </button>
+  </div>
+
+  @if (loading() && messages().length === 0) {
+    <div class="text-center py-8 text-gray-500">
+      Loading messages...
+    </div>
+  }
+
+  @if (!loading() && messages().length === 0) {
+    <div class="text-center py-8 text-gray-500">
+      No messages yet. Send your first message!
+    </div>
+  }
+
+  @if (!loading() && messages().length > 0) {
+    @for (message of messages(); track message.id) {
+      <app-message [message]="message"></app-message>
+    }
+  }
+</div>

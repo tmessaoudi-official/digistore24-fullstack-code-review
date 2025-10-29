@@ -1,0 +1,28 @@
+<div class="min-h-screen bg-gray-50">
+  <header class="bg-white shadow-sm">
+    <div class="max-w-4xl mx-auto px-4 py-4 flex justify-between items-center">
+      <h1 class="text-2xl font-bold text-gray-900">Chat Messenger</h1>
+      <div class="flex items-center space-x-4">
+        <span class="text-sm text-gray-600">
+          Welcome, <span class="font-semibold">{{ currentUser()?.name || 'User' }}</span>
+        </span>
+        <button (click)="logout()"
+          class="px-4 py-2 text-sm bg-red-500 text-white rounded hover:bg-red-600 transition-colors">
+          Logout
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-4xl mx-auto px-4 py-8">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div class="lg:col-span-2">
+        <app-message-list></app-message-list>
+      </div>
+
+      <div class="lg:col-span-1">
+        <app-message-form></app-message-form>
+      </div>
+    </div>
+  </main>
+</div>
