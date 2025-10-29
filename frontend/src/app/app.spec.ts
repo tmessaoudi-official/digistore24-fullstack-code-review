@@ -5,6 +5,7 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideRouter } from '@angular/router';
 import { routes } from '@/app/app.routes';
+import { authentication as AuthenticationInterceptor } from '@/app/security/http/interceptors/authentication';
 
 describe('App', () => {
   beforeEach(async () => {
@@ -13,7 +14,7 @@ describe('App', () => {
         provideBrowserGlobalErrorListeners(),
         provideZonelessChangeDetection(),
         provideRouter(routes),
-        provideHttpClient(withInterceptors([])),
+        provideHttpClient(withInterceptors([AuthenticationInterceptor])),
         provideHttpClientTesting(),
       ],
       imports: [App],
