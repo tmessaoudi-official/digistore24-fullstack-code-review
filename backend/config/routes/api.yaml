@@ -1,4 +1,4 @@
 _security_logout:
-    resource: ../src/Controller/Api
+    resource: ../../src/Controller/Api
     type: attribute
     prefix: /api

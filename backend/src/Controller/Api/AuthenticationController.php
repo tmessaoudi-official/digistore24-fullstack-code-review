@@ -6,6 +6,7 @@ namespace App\Controller\Api;
 
 use App\DTO\RegisterUserDTO;
 use App\Service\AuthenticationService;
+use LogicException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -38,13 +39,13 @@ class AuthenticationController extends AbstractController
     public function login(): never
     {
         // This method is intercepted by the login firewall
-        throw new \LogicException('This should never be reached.');
+        throw new LogicException('This should never be reached.');
     }
 
-    #[Route('/auth/logout', name: 'api_auth_logout', methods: ['POST'])]
+    #[Route('/auth/logout', name: 'api_auth_logout', methods: ['POST', 'GET'])]
     public function logout(): never
     {
         // This method is intercepted by the logout firewall
-        throw new \LogicException('This should never be reached.');
+        throw new LogicException('This should never be reached.');
     }
 }
