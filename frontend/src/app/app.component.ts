@@ -1,5 +1,5 @@
 import {Component, Injectable, Input, OnInit} from '@angular/core';
-import {NgClass, NgForOf, NgIf} from "@angular/common";
+import { NgClass } from "@angular/common";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 
 @Injectable()
@@ -54,16 +54,17 @@ class MessageComponent {
     selector: 'app-chat',
     providers: [MessageService],
     imports: [
-        NgForOf,
-        MessageComponent
-    ],
+    MessageComponent
+],
     template: `
     <div>
-      <div *ngFor="let message of messages; index as i;">
-        <app-massage [message]="message" [no]="i"></app-massage>
-      </div>
+      @for (message of messages; track message; let i = $index) {
+        <div>
+          <app-massage [message]="message" [no]="i"></app-massage>
+        </div>
+      }
     </div>
-  `
+    `
 })
 class ChatComponent implements OnInit {
   messages: Message[] = [];
@@ -84,29 +85,30 @@ class ChatComponent implements OnInit {
     selector: 'app-create-message',
     providers: [MessageService],
     imports: [
-        ReactiveFormsModule,
-        FormsModule,
-        MessageComponent,
-        NgIf,
-        NgClass,
-    ],
+    ReactiveFormsModule,
+    FormsModule,
+    MessageComponent,
+    NgClass
+],
     template: `
-    <div *ngIf="! message.empty()">
-      <app-massage [message]="message" no="preview"></app-massage>
-    </div>
+    @if (! message.empty()) {
+      <div>
+        <app-massage [message]="message" no="preview"></app-massage>
+      </div>
+    }
     <form (ngSubmit)="onSubmit()">
       <label class="mt-4">
         <div>Write Message</div>
         <textarea class="block w-full" required name="text" [(ngModel)]="message.text"></textarea>
       </label>
-
+    
       <button type="submit"
-          [disabled]="message.status === 'pending'"
-          class="pointer bg-blue-400 py-2 px-4 mt-2 w-full"
-          [ngClass]="{'bg-gray-400': message.status === 'pending'}"
+        [disabled]="message.status === 'pending'"
+        class="pointer bg-blue-400 py-2 px-4 mt-2 w-full"
+        [ngClass]="{'bg-gray-400': message.status === 'pending'}"
       >Send</button>
     </form>
-  `,
+    `,
     styles: ``
 })
 class CreateMessageComponent {
