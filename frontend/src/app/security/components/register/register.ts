@@ -1,8 +1,9 @@
-import { Component, inject, signal, WritableSignal } from '@angular/core';
+import { AfterViewInit, Component, inject, OnDestroy, signal, WritableSignal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Authentication as AuthenticationService } from '@/app/security/services/authentication';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-register',
@@ -10,7 +11,7 @@ import { Authentication as AuthenticationService } from '@/app/security/services
   templateUrl: './register.html',
   styleUrls: ['./register.scss']
 })
-export class Register {
+export class Register implements OnDestroy, AfterViewInit {
   public registerForm: FormGroup;
   public errorMessage: WritableSignal<string> = signal<string>('');
   public successMessage: WritableSignal<string> = signal<string>('');
@@ -19,6 +20,7 @@ export class Register {
   private fb: FormBuilder = inject(FormBuilder);
   private authenticationService: AuthenticationService = inject(AuthenticationService);
   private router: Router = inject(Router);
+  private destroy$ = new Subject<void>();
 
   constructor(
 
@@ -34,13 +36,21 @@ export class Register {
     });
   }
 
+  public ngAfterViewInit(): void {
+    if (this.authenticationService.isAuthenticated$() || this.authenticationService.hasToken()) {
+      this.router.navigate(['/chatbot']);
+    }
+  }
+
   onSubmit(): void {
     if (this.registerForm.valid) {
       this.isLoading.update((_value) => true);
       this.errorMessage.update((_value) => '');
       this.successMessage.update((_value) => '');
 
-      this.authenticationService.register(this.registerForm.value).subscribe({
+      this.authenticationService.register(this.registerForm.value).pipe(
+        takeUntil(this.destroy$)
+      ).subscribe({
         next: () => {
           this.isLoading.update((_value) => false);
           this.successMessage.update((_value) => 'Account created successfully! Redirecting to login...');
@@ -58,5 +68,10 @@ export class Register {
 
   switchToLogin(): void {
     this.router.navigate(['/login']);
+  }
+
+  public ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

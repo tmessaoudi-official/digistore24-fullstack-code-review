@@ -1,8 +1,9 @@
-import { Component, inject, signal, WritableSignal } from '@angular/core';
+import { AfterViewInit, Component, inject, OnDestroy, signal, WritableSignal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Authentication as AuthenticationService } from '@/app/security/services/authentication';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -10,7 +11,7 @@ import { Authentication as AuthenticationService } from '@/app/security/services
   templateUrl: './login.html',
   styleUrls: ['./login.scss']
 })
-export class Login {
+export class Login implements OnDestroy, AfterViewInit {
   public loginForm: FormGroup;
   public errorMessage: WritableSignal<string> = signal<string>('');
   public isLoading: WritableSignal<boolean> = signal<boolean>(false);
@@ -18,8 +19,9 @@ export class Login {
   private fb: FormBuilder = inject(FormBuilder);
   private authenticationService: AuthenticationService = inject(AuthenticationService);
   private router: Router = inject(Router);
+  private destroy$ = new Subject<void>();
 
-  constructor(
+  public constructor(
 
   ) {
     this.loginForm = this.fb.group({
@@ -28,12 +30,20 @@ export class Login {
     });
   }
 
-  onSubmit(): void {
+  public ngAfterViewInit(): void {
+    if (this.authenticationService.isAuthenticated$() || this.authenticationService.hasToken()) {
+      this.router.navigate(['/chatbot']);
+    }
+  }
+
+  public onSubmit(): void {
     if (this.loginForm.valid) {
       this.isLoading.update((_value) => true);
       this.errorMessage.update((_value) => '');
 
-      this.authenticationService.login(this.loginForm.value).subscribe({
+      this.authenticationService.login(this.loginForm.value).pipe(
+        takeUntil(this.destroy$)
+      ).subscribe({
         next: () => {
           this.isLoading.update((_value) => false);
           this.router.navigate(['/chatbot']);
@@ -46,7 +56,12 @@ export class Login {
     }
   }
 
-  switchToRegister(): void {
+  public switchToRegister(): void {
     this.router.navigate(['/register']);
+  }
+
+  public ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }
