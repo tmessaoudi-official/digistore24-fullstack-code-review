@@ -8,6 +8,7 @@ use App\Chatbot\Logger\Attribute\LoggerChannel;
 use App\Chatbot\Logger\Contracts\ChannelAwareLoggerInterface;
 use App\Entity\Message;
 use App\Repository\MessageRepository;
+use App\Repository\UserRepository;
 use DateTimeImmutable;
 use Psr\Log\LoggerInterface;
 
@@ -15,6 +16,7 @@ final class DateTimePlugin extends AbstractChatbotPlugin implements ChannelAware
 {
     public function __construct(
         protected readonly MessageRepository $messageRepository,
+        protected readonly UserRepository $userRepository,
         #[LoggerChannel(name: 'date_time')]
         protected readonly LoggerInterface $logger,
     ) {

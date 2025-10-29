@@ -8,12 +8,14 @@ use App\Chatbot\Logger\Attribute\LoggerChannel;
 use App\Chatbot\Logger\Contracts\ChannelAwareLoggerInterface;
 use App\Entity\Message;
 use App\Repository\MessageRepository;
+use App\Repository\UserRepository;
 use Psr\Log\LoggerInterface;
 
 final class GenericChatbotPlugin extends AbstractChatbotPlugin implements ChannelAwareLoggerInterface
 {
     public function __construct(
         protected readonly MessageRepository $messageRepository,
+        protected readonly UserRepository $userRepository,
         #[LoggerChannel(name: 'generic_chatbot')]
         protected readonly LoggerInterface $logger,
     ) {

@@ -5,14 +5,16 @@ declare(strict_types=1);
 namespace App\Controller\Api;
 
 use App\DTO\RegisterUserDTO;
+use App\Entity\User;
 use App\Service\AuthenticationService;
 use LogicException;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[AsController]
 #[Route('/api/auth', name: 'api_auth_')]
@@ -36,6 +38,17 @@ class AuthenticationController
         $this->authenticationService->registerUser($dto);
 
         return new JsonResponse('', Response::HTTP_CREATED);
+    }
+
+    #[IsGranted('ROLE_USER')]
+    #[Route('/me', name: 'me', methods: ['GET'])]
+    public function me(#[CurrentUser] User $user): JsonResponse
+    {
+        return new JsonResponse([
+            'email' => $user->getEmail(),
+            'name' => $user->getName(),
+            'roles' => $user->getRoles(),
+        ]);
     }
 
     #[Route('/login', name: 'login', methods: ['POST'])]
