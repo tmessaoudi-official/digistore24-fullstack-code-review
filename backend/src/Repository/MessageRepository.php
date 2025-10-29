@@ -42,7 +42,7 @@ class MessageRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('m')
             ->andWhere('m.user = :user')
             ->setParameter('user', $user)
-            ->orderBy('m.createdAt', 'DESC')
+            ->orderBy('m.id', 'DESC')
             ->getQuery()
             ->getResult()
         ;

@@ -26,9 +26,9 @@ final class MessageController
     }
 
     #[Route('', name: 'get', methods: ['GET'])]
-    public function index(): JsonResponse
+    public function get(#[CurrentUser] User $user): JsonResponse
     {
-        $messages = $this->messageService->getAllMessages();
+        $messages = $this->messageService->getUserMessages($user);
 
         return new JsonResponse(
             array_map(static fn ($message) => $message->toArray(), $messages)
@@ -36,22 +36,12 @@ final class MessageController
     }
 
     #[Route('', name: 'post', methods: ['POST'])]
-    public function create(
+    public function post(
         #[MapRequestPayload] CreateMessageDTO $dto,
         #[CurrentUser] User $user,
     ): JsonResponse {
         $message = $this->messageService->createMessage($dto, $user);
 
         return new JsonResponse($message->toArray(), Response::HTTP_CREATED);
-    }
-
-    #[Route('/me', name: 'get_me', methods: ['GET'])]
-    public function me(#[CurrentUser] User $user): JsonResponse
-    {
-        $messages = $this->messageService->getUserMessages($user);
-
-        return new JsonResponse(
-            array_map(static fn ($message) => $message->toArray(), $messages)
-        );
     }
 }

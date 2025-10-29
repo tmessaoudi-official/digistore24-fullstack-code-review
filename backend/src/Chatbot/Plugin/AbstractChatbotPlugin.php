@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Chatbot\Plugin;
 
+use function sprintf;
+
 use App\Chatbot\Contract\ChatbotPluginInterface;
 use App\Entity\Message;
 use App\Entity\User;
@@ -28,6 +30,7 @@ abstract class AbstractChatbotPlugin implements ChatbotPluginInterface
         $botMessage->setContent($responseContent);
         $botMessage->setUser($this->getBotUser());
         $botMessage->setStatus(Message::STATUS_RECEIVED);
+        $botMessage->setInReplyTo($originalMessage);
 
         $this->messageRepository->save($botMessage, true);
 
@@ -45,11 +48,11 @@ abstract class AbstractChatbotPlugin implements ChatbotPluginInterface
 
     protected function getBotUser(): User
     {
-        if ($this->botUser === null) {
+        if (null === $this->botUser) {
             $botEmail = sprintf('bot+%s@local.io', $this->getName());
             $botUser = $this->userRepository->findByEmail($botEmail);
 
-            if ($botUser === null) {
+            if (null === $botUser) {
                 $botUser = new User();
                 $botUser->setEmail($botEmail);
                 $botUser->setName($this->getBotDisplayName());
