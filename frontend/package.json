@@ -12,6 +12,8 @@
     "watch:local": "ng build --watch --configuration development,local",
     "watch:development": "ng build --watch --configuration development",
     "watch:production": "ng build --watch --configuration production",
+    "lint": "ng lint",
+    "lint:fix": "ng lint --fix",
     "test": "ng test"
   },
   "private": true,
@@ -32,6 +34,8 @@
     "@angular/build": "^20.3.8",
     "@angular/cli": "^20.3.8",
     "@angular/compiler-cli": "^20.3.9",
+    "angular-eslint": "20.5.0",
+    "eslint": "^9.38.0",
     "@types/jasmine": "~5.1.0",
     "jasmine-core": "~5.1.0",
     "karma": "~6.4.0",
@@ -39,6 +43,7 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
-    "typescript": "~5.8.3"
+    "typescript": "~5.8.3",
+    "typescript-eslint": "^8.46.2"
   }
 }
