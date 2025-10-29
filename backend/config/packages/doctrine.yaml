@@ -13,7 +13,6 @@ doctrine:
         identity_generation_preferences:
             Doctrine\DBAL\Platforms\PostgreSQLPlatform: identity
         auto_mapping: true
-        quote_strategy: App\Doctrine\ORM\Mapping\QuoteStrategy
         mappings:
             App:
                 type: attribute
