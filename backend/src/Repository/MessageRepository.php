@@ -40,7 +40,7 @@ class MessageRepository extends ServiceEntityRepository
     public function findByUser(User $user): array
     {
         return $this->createQueryBuilder('m')
-            ->andWhere('m.user = :user')
+            ->andWhere('m."user" = :user')
             ->setParameter('user', $user)
             ->orderBy('m.id', 'DESC')
             ->getQuery()
