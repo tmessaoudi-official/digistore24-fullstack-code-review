@@ -30,7 +30,20 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         }
 
         $user->setPassword($newHashedPassword);
+        $this->save($user, true);
+    }
+
+    public function findByEmail(string $email): ?User
+    {
+        return $this->findOneBy(['email' => $email]);
+    }
+
+    public function save(User $user, bool $flush = false): void
+    {
         $this->getEntityManager()->persist($user);
-        $this->getEntityManager()->flush();
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
     }
 }
