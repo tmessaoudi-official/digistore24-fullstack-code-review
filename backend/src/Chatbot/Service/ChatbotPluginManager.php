@@ -7,18 +7,21 @@ namespace App\Chatbot\Service;
 use function count;
 
 use App\Chatbot\Contract\ChatbotPluginInterface;
+use App\Chatbot\Logger\Attribute\LoggerChannel;
+use App\Chatbot\Logger\Contracts\ChannelAwareLoggerInterface;
 use App\Entity\Message;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\TaggedIterator;
 use Throwable;
 
-final class ChatbotPluginManager
+final class ChatbotPluginManager implements ChannelAwareLoggerInterface
 {
     private array $sortedChatbotPlugins = [];
 
     public function __construct(
         #[TaggedIterator(tag: 'app.chatbot.plugin')]
         iterable $chatbotPlugins,
+        #[LoggerChannel(name: 'manager')]
         private readonly LoggerInterface $logger,
     ) {
         $this->sortedChatbotPlugins = $this->sortChatbotPluginsByPriority($chatbotPlugins);

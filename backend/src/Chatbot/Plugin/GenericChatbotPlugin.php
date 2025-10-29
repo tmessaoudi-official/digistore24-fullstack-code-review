@@ -4,10 +4,21 @@ declare(strict_types=1);
 
 namespace App\Chatbot\Plugin;
 
+use App\Chatbot\Logger\Attribute\LoggerChannel;
+use App\Chatbot\Logger\Contracts\ChannelAwareLoggerInterface;
 use App\Entity\Message;
+use App\Repository\MessageRepository;
+use Psr\Log\LoggerInterface;
 
-final class GenericChatbotPlugin extends AbstractChatbotPlugin
+final class GenericChatbotPlugin extends AbstractChatbotPlugin implements ChannelAwareLoggerInterface
 {
+    public function __construct(
+        protected readonly MessageRepository $messageRepository,
+        #[LoggerChannel(name: 'generic_chatbot')]
+        protected readonly LoggerInterface $logger,
+    ) {
+    }
+
     private const array KEYWORD_RESPONSES = [
         'hello' => 'Hi there! How can I help you today?',
         'hi' => 'Hello! What can I do for you?',
