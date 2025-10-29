@@ -3,4 +3,5 @@
 stof_doctrine_extensions:
     default_locale: en_US
     orm:
-        timestampable: true
+        default:
+            timestampable: true

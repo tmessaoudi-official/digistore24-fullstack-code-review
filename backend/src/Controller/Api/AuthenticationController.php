@@ -16,7 +16,7 @@ use Symfony\Component\Routing\Attribute\Route;
 
 #[AsController]
 #[Route('/api/auth', name: 'api_auth_')]
-class AuthenticationController extends AbstractController
+class AuthenticationController
 {
     public function __construct(
         private readonly AuthenticationService $authenticationService,
@@ -28,14 +28,14 @@ class AuthenticationController extends AbstractController
         #[MapRequestPayload] RegisterUserDTO $dto,
     ): JsonResponse {
         if ($this->authenticationService->userExists($dto->email)) {
-            return $this->json([
+            return new JsonResponse([
                 'error' => 'User with this email already exists',
             ], Response::HTTP_CONFLICT);
         }
 
         $this->authenticationService->registerUser($dto);
 
-        return $this->json(null, Response::HTTP_CREATED);
+        return new JsonResponse('', Response::HTTP_CREATED);
     }
 
     #[Route('/login', name: 'login', methods: ['POST'])]
