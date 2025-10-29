@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Chatbot\Service\ChatbotPluginManager;
 use App\DTO\CreateMessageDTO;
 use App\Entity\Message;
 use App\Entity\User;
@@ -13,6 +14,7 @@ final class MessageService
 {
     public function __construct(
         private readonly MessageRepository $messageRepository,
+        private readonly ChatbotPluginManager $pluginManager,
     ) {
     }
 
@@ -34,6 +36,8 @@ final class MessageService
         $message->setStatus(Message::STATUS_SENT);
 
         $this->messageRepository->save($message, true);
+
+        $this->pluginManager->processMessage($message);
 
         return $message;
     }

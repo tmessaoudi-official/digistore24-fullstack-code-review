@@ -33,7 +33,8 @@ class MessageRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('m')
             ->orderBy('m.id', 'DESC')
             ->getQuery()
-            ->getResult();
+            ->getResult()
+        ;
     }
 
     public function findByUser(User $user): array
@@ -43,6 +44,7 @@ class MessageRepository extends ServiceEntityRepository
             ->setParameter('user', $user)
             ->orderBy('m.createdAt', 'DESC')
             ->getQuery()
-            ->getResult();
+            ->getResult()
+        ;
     }
 }
