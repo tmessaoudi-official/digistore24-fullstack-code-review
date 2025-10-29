@@ -32,9 +32,8 @@ class Message {
 }
 
 @Component({
-  selector: 'app-massage',
-  standalone: true,
-  template: `
+    selector: 'app-massage',
+    template: `
     <div style="background-color: #fff;">
       <span class="bg-slate-400" class="block bg-slate-200 text-slate-500">#{{no}} - {{ message.status }}</span>
       <div class="p-2" [ngClass]="{'text-slate-500': message.status === 'draft'}">
@@ -42,9 +41,9 @@ class Message {
       </div>
     </div>
   `,
-  imports: [
-    NgClass
-  ]
+    imports: [
+        NgClass
+    ]
 })
 class MessageComponent {
   @Input({ required: true }) message: any;
@@ -52,20 +51,19 @@ class MessageComponent {
 }
 
 @Component({
-  selector: 'app-chat',
-  standalone: true,
-  providers: [MessageService],
-  imports: [
-    NgForOf,
-    MessageComponent
-  ],
-  template: `
+    selector: 'app-chat',
+    providers: [MessageService],
+    imports: [
+        NgForOf,
+        MessageComponent
+    ],
+    template: `
     <div>
       <div *ngFor="let message of messages; index as i;">
         <app-massage [message]="message" [no]="i"></app-massage>
       </div>
     </div>
-  `,
+  `
 })
 class ChatComponent implements OnInit {
   messages: Message[] = [];
@@ -83,17 +81,16 @@ class ChatComponent implements OnInit {
 }
 
 @Component({
-  selector: 'app-create-message',
-  standalone: true,
-  providers: [MessageService],
-  imports: [
-    ReactiveFormsModule,
-    FormsModule,
-    MessageComponent,
-    NgIf,
-    NgClass,
-  ],
-  template: `
+    selector: 'app-create-message',
+    providers: [MessageService],
+    imports: [
+        ReactiveFormsModule,
+        FormsModule,
+        MessageComponent,
+        NgIf,
+        NgClass,
+    ],
+    template: `
     <div *ngIf="! message.empty()">
       <app-massage [message]="message" no="preview"></app-massage>
     </div>
@@ -110,7 +107,7 @@ class ChatComponent implements OnInit {
       >Send</button>
     </form>
   `,
-  styles: ``
+    styles: ``
 })
 class CreateMessageComponent {
   message: Message = new Message('', 'draft');
@@ -133,19 +130,18 @@ class CreateMessageComponent {
 }
 
 @Component({
-  selector: 'app-root',
-  standalone: true,
-  imports: [
-      ChatComponent,
-      CreateMessageComponent
-  ],
-  template: `
+    selector: 'app-root',
+    imports: [
+        ChatComponent,
+        CreateMessageComponent
+    ],
+    template: `
     <div class="max-w-md mx-auto">
       <h1 class="text-2xl my-8">{{ title }}</h1>
       <app-chat></app-chat>
       <app-create-message></app-create-message>
     </div>
-  `,
+  `
 })
 export class AppComponent {
   title = 'Chat';
