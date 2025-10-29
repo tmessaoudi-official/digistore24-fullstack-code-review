@@ -6,24 +6,17 @@ namespace App\DTO;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
-class CreateMessageDTO
+readonly class CreateMessageDTO
 {
     public function __construct(
-        #[Assert\NotBlank(message: 'Message cannot be empty')]
+        #[Assert\NotBlank(message: 'Message content is required')]
         #[Assert\Length(
             min: 1,
             max: 5000,
-            minMessage: 'Message must be at least {{ limit }} characters long',
+            minMessage: 'Message must be at least {{ limit }} character long',
             maxMessage: 'Message cannot be longer than {{ limit }} characters'
         )]
-        public readonly string $message,
+        public string $message,
     ) {
-    }
-
-    public static function fromArray(array $data): self
-    {
-        return new self(
-            message: $data['message'] ?? '',
-        );
     }
 }

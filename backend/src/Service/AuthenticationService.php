@@ -9,7 +9,7 @@ use App\Entity\User;
 use App\Repository\UserRepository;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
-class AuthenticationService
+final class AuthenticationService
 {
     public function __construct(
         private readonly UserRepository $userRepository,
