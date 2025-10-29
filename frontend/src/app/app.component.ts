@@ -1,16 +1,16 @@
-import {Component, Injectable, Input, OnInit} from '@angular/core';
+import { Component, Injectable, Input, OnInit } from '@angular/core';
 import { NgClass } from "@angular/common";
-import {FormsModule, ReactiveFormsModule} from "@angular/forms";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 
 @Injectable()
 class MessageService {
   messages: Message[] = [];
 
   async all() {
-      const res = await fetch('http://127.0.0.1:3000/messages')
-      const data = await res.json();
+    const res = await fetch('http://127.0.0.1:3000/messages')
+    const data = await res.json();
 
-      this.messages = data.messages.map((message: any) => new Message(message.text, message.status));
+    this.messages = data.messages.map((message: any) => new Message(message.text, message.status));
   }
 
   async add(message: Message) {
@@ -32,8 +32,8 @@ class Message {
 }
 
 @Component({
-    selector: 'app-massage',
-    template: `
+  selector: 'app-massage',
+  template: `
     <div style="background-color: #fff;">
       <span class="bg-slate-400" class="block bg-slate-200 text-slate-500">#{{no}} - {{ message.status }}</span>
       <div class="p-2" [ngClass]="{'text-slate-500': message.status === 'draft'}">
@@ -41,9 +41,9 @@ class Message {
       </div>
     </div>
   `,
-    imports: [
-        NgClass
-    ]
+  imports: [
+    NgClass
+  ]
 })
 class MessageComponent {
   @Input({ required: true }) message: any;
@@ -51,12 +51,12 @@ class MessageComponent {
 }
 
 @Component({
-    selector: 'app-chat',
-    providers: [MessageService],
-    imports: [
+  selector: 'app-chat',
+  providers: [MessageService],
+  imports: [
     MessageComponent
-],
-    template: `
+  ],
+  template: `
     <div>
       @for (message of messages; track message; let i = $index) {
         <div>
@@ -68,29 +68,29 @@ class MessageComponent {
 })
 class ChatComponent implements OnInit {
   messages: Message[] = [];
-    constructor(
-        private messageService: MessageService
-    ) {
+  constructor(
+    private messageService: MessageService
+  ) {
 
-    }
+  }
 
-    async ngOnInit() {
-      // @ts-ignore
-      await this.messageService.all();
-      this.messages = this.messageService.messages;
-    }
+  async ngOnInit() {
+    // @ts-ignore
+    await this.messageService.all();
+    this.messages = this.messageService.messages;
+  }
 }
 
 @Component({
-    selector: 'app-create-message',
-    providers: [MessageService],
-    imports: [
+  selector: 'app-create-message',
+  providers: [MessageService],
+  imports: [
     ReactiveFormsModule,
     FormsModule,
     MessageComponent,
     NgClass
-],
-    template: `
+  ],
+  template: `
     @if (! message.empty()) {
       <div>
         <app-massage [message]="message" no="preview"></app-massage>
@@ -109,7 +109,7 @@ class ChatComponent implements OnInit {
       >Send</button>
     </form>
     `,
-    styles: ``
+  styles: ``
 })
 class CreateMessageComponent {
   message: Message = new Message('', 'draft');
@@ -120,24 +120,24 @@ class CreateMessageComponent {
   }
 
   async onSubmit() {
-      this.message.status = 'pending';
-      const res = await fetch('http://127.0.0.1:3000/messages/send', {
-        method: 'GET',
-        body: JSON.stringify({text: this.message.text}),
-      });
-      res.status === 204 ? this.message.status = 'sent' : this.message.status = 'failed';
-      await this.messageService.add(this.message);
-      this.message = new Message('', 'draft');
+    this.message.status = 'pending';
+    const res = await fetch('http://127.0.0.1:3000/messages/send', {
+      method: 'GET',
+      body: JSON.stringify({ text: this.message.text }),
+    });
+    res.status === 204 ? this.message.status = 'sent' : this.message.status = 'failed';
+    await this.messageService.add(this.message);
+    this.message = new Message('', 'draft');
   }
 }
 
 @Component({
-    selector: 'app-root',
-    imports: [
-        ChatComponent,
-        CreateMessageComponent
-    ],
-    template: `
+  selector: 'app-root',
+  imports: [
+    ChatComponent,
+    CreateMessageComponent
+  ],
+  template: `
     <div class="max-w-md mx-auto">
       <h1 class="text-2xl my-8">{{ title }}</h1>
       <app-chat></app-chat>
