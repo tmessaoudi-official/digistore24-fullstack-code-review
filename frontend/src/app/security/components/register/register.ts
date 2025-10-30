@@ -49,7 +49,7 @@ export class Register implements OnDestroy {
           this.isLoading.update((_value) => false);
           this.successMessage.update((_value) => 'Account created successfully! Redirecting to login...');
           setTimeout(() => {
-            this.router.navigate(['/login']);
+            
           }, 2000);
         },
         error: (error) => {
