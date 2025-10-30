@@ -14,19 +14,46 @@ This is a dummy project, which is used to demonstrate knowledge of PHP with Symf
 
 ### Repository Structure:
 
-`/backend` - Should contain all backend-related files.
+`/backend` - ⭐ **Primary backend** - Manual Symfony implementation (production-ready)
 
-`/frontend` - Contains all frontend-related files.
+`/backend-apiplatform` - 🆕 **Alternative backend** - API Platform implementation (comparison)
 
-`/docs` - Contains the openapi.yaml file and any additional documentation.
+`/frontend` - Angular 20 application with modern features
+
+`/docs` - OpenAPI specification and documentation
 
 #### Backend (/backend):
 
-Build here your Symfony backend service here.
+**Primary implementation** built from scratch to demonstrate:
+- Clean Architecture & SOLID principles
+- Custom controllers, services, and DTOs
+- Manual OpenAPI documentation
+- Chatbot plugin system
+- JWT authentication
+
+**See**: `BACKEND_CHANGES.md` for details
+
+#### Backend API Platform (/backend-apiplatform):
+
+**Alternative implementation** using API Platform to demonstrate:
+- Modern framework usage
+- Rapid development capabilities
+- Auto-generated documentation
+- Built-in pagination, filtering, sorting
+- Same functionality, 47% less code
+
+**See**: `API_PLATFORM_COMPARISON.md` for comparison
 
 #### Frontend (/frontend):
 
-app.component.ts - Main application file for Angular.
+Modern Angular 20 application featuring:
+- Standalone components (no NgModules)
+- Signal-based reactivity
+- Zoneless change detection
+- Modern control flow syntax
+- Comprehensive testing
+
+**See**: `FRONTEND_CHANGES.md` for details
 
 ##### API Definition (/docs):
 
@@ -35,19 +62,19 @@ openapi.yaml
 ## Tasks:
 
 ### Backend:
-- [ ] Implement the backend architecture from scratch, which will support the Angular application's API calls.
-- [ ] Implement error handling.
-- [ ] Implement the plugin system for extensibility (Chatbot).
-- [ ] Add authentication for message sending.
+- [X] Implement the backend architecture from scratch, which will support the Angular application's API calls.
+- [X] Implement error handling.
+- [X] Implement the plugin system for extensibility (Chatbot).
+- [X] Add authentication for message sending.
 ### Frontend:
-- [ ] Optimize data bindings and state management.
-- [ ] Improve the user interface responsiveness.
-- [ ] Implement a feature to display message status (sent, received).
-- [ ] Add seamless communication with the backend application.
-- [ ] Create a login form to allow users to log in and send messages.
+- [X] Optimize data bindings and state management.
+- [X] Improve the user interface responsiveness.
+- [X] Implement a feature to display message status (sent, received).
+- [X] Add seamless communication with the backend application.
+- [X] Create a login form to allow users to log in and send messages.
 ### API:
-- [ ] Review and if necessary correct RESTful API practices.
-- [ ] Ensure best practices in the API definition.
+- [X] Review and if necessary correct RESTful API practices.
+- [X] Ensure best practices in the API definition.
 
 ## General instructions
 
@@ -61,17 +88,66 @@ openapi.yaml
 
 ## Deliverables
 
-- [ ] send in files with your comments by (one of)
+- [x] send in files with your comments by (one of)
     - Inline-Code-Comments and send us the files
     - drop the files anywhere and send us the link
     - upload the code to your own Repository (Avoid forking the repository and creating a PR, as this would make your solution visible to others)
-- [ ] A brief report summarizing the changes you made, why, and **any additional recommendations if they had more time**.
-- [ ] Approximate indication of how many hours you worked for this
+- [x] A brief report summarizing the changes you made, why, and **any additional recommendations if they had more time**.
+    - See `BACKEND_CHANGES.md` and `FRONTEND_CHANGES.md` and `RECOMNENDATIONS.md`
+- [x] Approximate indication of how many hours you worked for this
+    - **~7-8 hours** (documented in reports)
 
-## Run instructions
+## Run Instructions
 
-- Backend: add your own instructions how to run it
-- Frontend: `cd frontend && npm install && npm run serve`
-- API: `openapi.yaml` file contains the API definition.
-- Access the frontend at `http://localhost:4200`.
-- Note: The project is set up to run on localhost by default.
+### 🐳 Option 1: Docker (Recommended - Easiest)
+
+```bash
+# Start everything with one command
+docker-compose up -d
+
+# Wait ~30 seconds, then access:
+# - Application: http://localhost:4200
+# - API Documentation: http://localhost:8000/api/doc/ui
+```
+
+**See `DOCKER_SETUP.md` for complete Docker guide.**
+
+---
+
+### 💻 Option 2: Manual Setup
+
+**Backend:**
+```bash
+cd backend
+composer install
+php bin/console lexik:jwt:generate-keypair
+php bin/console doctrine:database:create
+php bin/console doctrine:migrations:migrate --no-interaction
+symfony server:start  # or: php -S localhost:8000 -t public/
+```
+
+**Frontend:**
+```bash
+cd frontend
+npm ci
+npm start:develoment
+```
+
+**See `INSTRUCTIONS.md` for detailed setup instructions.**
+
+---
+
+### Access Points
+- **Application**: http://localhost:4200
+- **API Documentation**: http://localhost:8000/api/doc/ui
+- **API Spec (JSON)**: http://localhost:8000/api/doc.json
+- **API Spec (YAML)**: http://localhost:8000/api/doc.yaml
+
+### Testing
+```bash
+# Backend tests
+cd backend && composer test
+
+# Frontend tests
+cd frontend && npm run test
+```
