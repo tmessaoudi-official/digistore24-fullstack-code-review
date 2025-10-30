@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Chatbot\Plugin;
 
+use function in_array;
+
 use App\Chatbot\Plugin\GenericChatbotPlugin;
 use App\Entity\Message;
 use App\Entity\User;
@@ -13,7 +15,12 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
-class GenericChatbotPluginTest extends TestCase
+/**
+ * @internal
+ *
+ * @coversNothing
+ */
+final class GenericChatbotPluginTest extends TestCase
 {
     private MessageRepository&MockObject $messageRepository;
     private UserRepository&MockObject $userRepository;
@@ -40,7 +47,8 @@ class GenericChatbotPluginTest extends TestCase
         $this->userRepository
             ->method('findByEmail')
             ->with('bot+generic_chatbot@local.io')
-            ->willReturn($this->botUser);
+            ->willReturn($this->botUser)
+        ;
 
         $this->plugin = new GenericChatbotPlugin(
             $this->messageRepository,
@@ -51,23 +59,23 @@ class GenericChatbotPluginTest extends TestCase
 
     public function testGetName(): void
     {
-        $this->assertEquals('generic_chatbot', $this->plugin->getName());
+        self::assertSame('generic_chatbot', $this->plugin->getName());
     }
 
     public function testGetPriority(): void
     {
-        $this->assertEquals(10, $this->plugin->getPriority());
+        self::assertSame(10, $this->plugin->getPriority());
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('keywordProvider')]
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideSupportsWithKeywordsCases')]
     public function testSupportsWithKeywords(string $content, bool $expected): void
     {
         $message = $this->createMessage($content);
 
-        $this->assertEquals($expected, $this->plugin->supports($message));
+        self::assertSame($expected, $this->plugin->supports($message));
     }
 
-    public static function keywordProvider(): array
+    public static function provideSupportsWithKeywordsCases(): iterable
     {
         return [
             'hello keyword' => ['hello there', true],
@@ -87,33 +95,32 @@ class GenericChatbotPluginTest extends TestCase
         $message = new Message();
         $message->setContent('hello');
 
-        $this->assertFalse($this->plugin->supports($message));
+        self::assertFalse($this->plugin->supports($message));
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('responseProvider')]
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideProcessGeneratesCorrectResponseCases')]
     public function testProcessGeneratesCorrectResponse(string $input, string $expectedResponse): void
     {
         $message = $this->createMessage($input);
 
         $this->messageRepository
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('save')
             ->with(
-                $this->callback(function (Message $botMessage) use ($message, $expectedResponse) {
-                    return $botMessage->getContent() === $expectedResponse
+                self::callback(fn (Message $botMessage) => $botMessage->getContent() === $expectedResponse
                         && $botMessage->getUser() === $this->botUser
-                        && $botMessage->getStatus() === Message::STATUS_RECEIVED
-                        && $botMessage->getInReplyTo() === $message;
-                }),
+                        && Message::STATUS_RECEIVED === $botMessage->getStatus()
+                        && $botMessage->getInReplyTo() === $message),
                 true
-            );
+            )
+        ;
 
-        $this->logger->expects($this->once())->method('info');
+        $this->logger->expects(self::once())->method('info');
 
         $this->plugin->process($message);
     }
 
-    public static function responseProvider(): array
+    public static function provideProcessGeneratesCorrectResponseCases(): iterable
     {
         return [
             ['hello', 'Hi there! How can I help you today?'],
@@ -130,14 +137,13 @@ class GenericChatbotPluginTest extends TestCase
         $message = $this->createMessage('hello and thanks');
 
         $this->messageRepository
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('save')
             ->with(
-                $this->callback(function (Message $botMessage) {
-                    return $botMessage->getContent() === 'Hi there! How can I help you today?';
-                }),
+                self::callback(static fn (Message $botMessage) => 'Hi there! How can I help you today?' === $botMessage->getContent()),
                 true
-            );
+            )
+        ;
 
         $this->plugin->process($message);
     }
@@ -147,11 +153,12 @@ class GenericChatbotPluginTest extends TestCase
         $message = $this->createMessage('hello');
 
         $this->messageRepository
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('save')
-            ->willReturnCallback(function (Message $botMessage) use ($message) {
+            ->willReturnCallback(function (Message $botMessage) use ($message): void {
                 $this->assertSame($message, $botMessage->getInReplyTo());
-            });
+            })
+        ;
 
         $this->plugin->process($message);
     }
@@ -162,19 +169,19 @@ class GenericChatbotPluginTest extends TestCase
         $userRepository
             ->method('findByEmail')
             ->with('bot+generic_chatbot@local.io')
-            ->willReturn(null);
+            ->willReturn(null)
+        ;
 
         $userRepository
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('save')
             ->with(
-                $this->callback(function (User $user) {
-                    return $user->getEmail() === 'bot+generic_chatbot@local.io'
-                        && $user->getName() === 'Generic Chatbot'
-                        && in_array('ROLE_BOT', $user->getRoles());
-                }),
+                self::callback(static fn (User $user) => 'bot+generic_chatbot@local.io' === $user->getEmail()
+                        && 'Generic Chatbot' === $user->getName()
+                        && in_array('ROLE_BOT', $user->getRoles(), true)),
                 true
-            );
+            )
+        ;
 
         $plugin = new GenericChatbotPlugin(
             $this->messageRepository,

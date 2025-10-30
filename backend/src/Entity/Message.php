@@ -12,7 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 
 #[ORM\Entity(repositoryClass: MessageRepository::class)]
-#[ORM\Table(name:"messages")]
+#[ORM\Table(name: 'messages')]
 class Message
 {
     use TimestampableEntity;

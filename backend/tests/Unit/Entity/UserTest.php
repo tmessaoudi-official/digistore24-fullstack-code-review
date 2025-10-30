@@ -4,21 +4,28 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Entity;
 
+use function count;
+
 use App\Entity\Message;
 use App\Entity\User;
 use PHPUnit\Framework\TestCase;
 
-class UserTest extends TestCase
+/**
+ * @internal
+ *
+ * @coversNothing
+ */
+final class UserTest extends TestCase
 {
     public function testUserCreation(): void
     {
         $user = new User();
 
-        $this->assertNull($user->getId());
-        $this->assertNull($user->getEmail());
-        $this->assertNull($user->getName());
-        $this->assertIsArray($user->getRoles());
-        $this->assertContains('ROLE_USER', $user->getRoles());
+        self::assertNull($user->getId());
+        self::assertNull($user->getEmail());
+        self::assertNull($user->getName());
+        self::assertIsArray($user->getRoles());
+        self::assertContains('ROLE_USER', $user->getRoles());
     }
 
     public function testSetAndGetEmail(): void
@@ -28,8 +35,8 @@ class UserTest extends TestCase
 
         $result = $user->setEmail($email);
 
-        $this->assertSame($user, $result);
-        $this->assertEquals($email, $user->getEmail());
+        self::assertSame($user, $result);
+        self::assertSame($email, $user->getEmail());
     }
 
     public function testSetAndGetName(): void
@@ -39,8 +46,8 @@ class UserTest extends TestCase
 
         $result = $user->setName($name);
 
-        $this->assertSame($user, $result);
-        $this->assertEquals($name, $user->getName());
+        self::assertSame($user, $result);
+        self::assertSame($name, $user->getName());
     }
 
     public function testSetAndGetPassword(): void
@@ -50,8 +57,8 @@ class UserTest extends TestCase
 
         $result = $user->setPassword($password);
 
-        $this->assertSame($user, $result);
-        $this->assertEquals($password, $user->getPassword());
+        self::assertSame($user, $result);
+        self::assertSame($password, $user->getPassword());
     }
 
     public function testSetAndGetRoles(): void
@@ -61,12 +68,12 @@ class UserTest extends TestCase
 
         $result = $user->setRoles($roles);
 
-        $this->assertSame($user, $result);
+        self::assertSame($user, $result);
         $returnedRoles = $user->getRoles();
-        
-        $this->assertContains('ROLE_USER', $returnedRoles);
-        $this->assertContains('ROLE_ADMIN', $returnedRoles);
-        $this->assertContains('ROLE_MODERATOR', $returnedRoles);
+
+        self::assertContains('ROLE_USER', $returnedRoles);
+        self::assertContains('ROLE_ADMIN', $returnedRoles);
+        self::assertContains('ROLE_MODERATOR', $returnedRoles);
     }
 
     public function testGetRolesAlwaysIncludesRoleUser(): void
@@ -76,7 +83,7 @@ class UserTest extends TestCase
 
         $roles = $user->getRoles();
 
-        $this->assertContains('ROLE_USER', $roles);
+        self::assertContains('ROLE_USER', $roles);
     }
 
     public function testGetRolesReturnsUniqueValues(): void
@@ -86,7 +93,7 @@ class UserTest extends TestCase
 
         $roles = $user->getRoles();
 
-        $this->assertEquals(count($roles), count(array_unique($roles)));
+        self::assertSame(count($roles), count(array_unique($roles)));
     }
 
     public function testGetUserIdentifier(): void
@@ -95,7 +102,7 @@ class UserTest extends TestCase
         $email = 'test@example.com';
         $user->setEmail($email);
 
-        $this->assertEquals($email, $user->getUserIdentifier());
+        self::assertSame($email, $user->getUserIdentifier());
     }
 
     public function testAddMessage(): void
@@ -106,9 +113,9 @@ class UserTest extends TestCase
 
         $result = $user->addMessage($message);
 
-        $this->assertSame($user, $result);
-        $this->assertTrue($user->getMessages()->contains($message));
-        $this->assertSame($user, $message->getUser());
+        self::assertSame($user, $result);
+        self::assertTrue($user->getMessages()->contains($message));
+        self::assertSame($user, $message->getUser());
     }
 
     public function testAddMessageDoesNotDuplicateMessages(): void
@@ -120,7 +127,7 @@ class UserTest extends TestCase
         $user->addMessage($message);
         $user->addMessage($message);
 
-        $this->assertCount(1, $user->getMessages());
+        self::assertCount(1, $user->getMessages());
     }
 
     public function testRemoveMessage(): void
@@ -132,16 +139,16 @@ class UserTest extends TestCase
         $user->addMessage($message);
         $result = $user->removeMessage($message);
 
-        $this->assertSame($user, $result);
-        $this->assertFalse($user->getMessages()->contains($message));
+        self::assertSame($user, $result);
+        self::assertFalse($user->getMessages()->contains($message));
     }
 
     public function testEraseCredentials(): void
     {
         $user = new User();
-        
+
         $user->eraseCredentials();
-        
-        $this->assertTrue(true);
+
+        self::assertTrue(true);
     }
 }

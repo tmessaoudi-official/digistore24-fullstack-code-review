@@ -1,0 +1,21 @@
+nelmio_api_doc:
+    documentation:
+        info:
+            title: Chat Messenger API
+            description: RESTful API for a chat messenger application with authentication and chatbot integration
+            version: 1.0.0
+        servers:
+            - url: http://localhost:8000/api
+              description: Local development server
+        components:
+            securitySchemes:
+                bearerAuth:
+                    type: http
+                    scheme: bearer
+                    bearerFormat: JWT
+                    description: JWT token obtained from /auth/login endpoint
+        security:
+            - bearerAuth: []
+    areas:
+        path_patterns:
+            - ^/api(?!/doc) # Accepts routes under /api except /api/doc

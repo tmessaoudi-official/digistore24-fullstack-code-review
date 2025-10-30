@@ -14,7 +14,12 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 
-class MessageServiceTest extends TestCase
+/**
+ * @internal
+ *
+ * @coversNothing
+ */
+final class MessageServiceTest extends TestCase
 {
     private MessageRepository&MockObject $messageRepository;
     private ChatbotPluginManager $pluginManager;
@@ -44,13 +49,14 @@ class MessageServiceTest extends TestCase
         ];
 
         $this->messageRepository
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('findAllOrderedById')
-            ->willReturn($expectedMessages);
+            ->willReturn($expectedMessages)
+        ;
 
         $result = $this->messageService->getAllMessages();
 
-        $this->assertSame($expectedMessages, $result);
+        self::assertSame($expectedMessages, $result);
     }
 
     public function testGetUserMessages(): void
@@ -61,14 +67,15 @@ class MessageServiceTest extends TestCase
         ];
 
         $this->messageRepository
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('findByUser')
             ->with($this->testUser)
-            ->willReturn($expectedMessages);
+            ->willReturn($expectedMessages)
+        ;
 
         $result = $this->messageService->getUserMessages($this->testUser);
 
-        $this->assertSame($expectedMessages, $result);
+        self::assertSame($expectedMessages, $result);
     }
 
     public function testCreateMessage(): void
@@ -76,23 +83,22 @@ class MessageServiceTest extends TestCase
         $dto = new CreateMessageDTO('Test message content');
 
         $this->messageRepository
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('save')
             ->with(
-                $this->callback(function (Message $message) use ($dto) {
-                    return $message->getContent() === $dto->message
+                self::callback(fn (Message $message) => $message->getContent() === $dto->message
                         && $message->getUser() === $this->testUser
-                        && $message->getStatus() === Message::STATUS_SENT;
-                }),
+                        && Message::STATUS_SENT === $message->getStatus()),
                 true
-            );
+            )
+        ;
 
         $result = $this->messageService->createMessage($dto, $this->testUser);
 
-        $this->assertInstanceOf(Message::class, $result);
-        $this->assertEquals($dto->message, $result->getContent());
-        $this->assertSame($this->testUser, $result->getUser());
-        $this->assertEquals(Message::STATUS_SENT, $result->getStatus());
+        self::assertInstanceOf(Message::class, $result);
+        self::assertSame($dto->message, $result->getContent());
+        self::assertSame($this->testUser, $result->getUser());
+        self::assertSame(Message::STATUS_SENT, $result->getStatus());
     }
 
     public function testUpdateMessageStatus(): void
@@ -101,14 +107,15 @@ class MessageServiceTest extends TestCase
         $newStatus = Message::STATUS_RECEIVED;
 
         $this->messageRepository
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('save')
-            ->with($message, true);
+            ->with($message, true)
+        ;
 
         $result = $this->messageService->updateMessageStatus($message, $newStatus);
 
-        $this->assertSame($message, $result);
-        $this->assertEquals($newStatus, $message->getStatus());
+        self::assertSame($message, $result);
+        self::assertSame($newStatus, $message->getStatus());
     }
 
     public function testCreateMessageSavesWithFlush(): void
@@ -116,9 +123,10 @@ class MessageServiceTest extends TestCase
         $dto = new CreateMessageDTO('Test');
 
         $this->messageRepository
-            ->expects($this->once())
+            ->expects(self::once())
             ->method('save')
-            ->with($this->isInstanceOf(Message::class), true);
+            ->with(self::isInstanceOf(Message::class), true)
+        ;
 
         $this->messageService->createMessage($dto, $this->testUser);
     }

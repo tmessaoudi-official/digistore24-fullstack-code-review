@@ -7,8 +7,14 @@ namespace App\Tests\Unit\Entity;
 use App\Entity\Message;
 use App\Entity\User;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 
-class MessageTest extends TestCase
+/**
+ * @internal
+ *
+ * @coversNothing
+ */
+final class MessageTest extends TestCase
 {
     private User $user;
 
@@ -23,11 +29,11 @@ class MessageTest extends TestCase
     {
         $message = new Message();
 
-        $this->assertNull($message->getId());
-        $this->assertNull($message->getContent());
-        $this->assertNull($message->getUser());
-        $this->assertEquals(Message::STATUS_SENT, $message->getStatus());
-        $this->assertNull($message->getInReplyTo());
+        self::assertNull($message->getId());
+        self::assertNull($message->getContent());
+        self::assertNull($message->getUser());
+        self::assertSame(Message::STATUS_SENT, $message->getStatus());
+        self::assertNull($message->getInReplyTo());
     }
 
     public function testSetAndGetContent(): void
@@ -37,8 +43,8 @@ class MessageTest extends TestCase
 
         $result = $message->setContent($content);
 
-        $this->assertSame($message, $result);
-        $this->assertEquals($content, $message->getContent());
+        self::assertSame($message, $result);
+        self::assertSame($content, $message->getContent());
     }
 
     public function testSetAndGetUser(): void
@@ -47,8 +53,8 @@ class MessageTest extends TestCase
 
         $result = $message->setUser($this->user);
 
-        $this->assertSame($message, $result);
-        $this->assertSame($this->user, $message->getUser());
+        self::assertSame($message, $result);
+        self::assertSame($this->user, $message->getUser());
     }
 
     public function testSetAndGetStatus(): void
@@ -57,8 +63,8 @@ class MessageTest extends TestCase
 
         $result = $message->setStatus(Message::STATUS_RECEIVED);
 
-        $this->assertSame($message, $result);
-        $this->assertEquals(Message::STATUS_RECEIVED, $message->getStatus());
+        self::assertSame($message, $result);
+        self::assertSame(Message::STATUS_RECEIVED, $message->getStatus());
     }
 
     public function testSetAndGetInReplyTo(): void
@@ -73,8 +79,8 @@ class MessageTest extends TestCase
 
         $result = $replyMessage->setInReplyTo($originalMessage);
 
-        $this->assertSame($replyMessage, $result);
-        $this->assertSame($originalMessage, $replyMessage->getInReplyTo());
+        self::assertSame($replyMessage, $result);
+        self::assertSame($originalMessage, $replyMessage->getInReplyTo());
     }
 
     public function testToArrayWithBasicData(): void
@@ -86,21 +92,21 @@ class MessageTest extends TestCase
 
         $array = $message->toArray();
 
-        $this->assertIsArray($array);
-        $this->assertArrayHasKey('id', $array);
-        $this->assertArrayHasKey('message', $array);
-        $this->assertArrayHasKey('user', $array);
-        $this->assertArrayHasKey('status', $array);
-        $this->assertArrayHasKey('created_at', $array);
-        $this->assertArrayHasKey('updated_at', $array);
-        $this->assertArrayHasKey('in_reply_to', $array);
-        $this->assertArrayHasKey('replies', $array);
+        self::assertIsArray($array);
+        self::assertArrayHasKey('id', $array);
+        self::assertArrayHasKey('message', $array);
+        self::assertArrayHasKey('user', $array);
+        self::assertArrayHasKey('status', $array);
+        self::assertArrayHasKey('created_at', $array);
+        self::assertArrayHasKey('updated_at', $array);
+        self::assertArrayHasKey('in_reply_to', $array);
+        self::assertArrayHasKey('replies', $array);
 
-        $this->assertEquals('Test message', $array['message']);
-        $this->assertEquals('Test User', $array['user']);
-        $this->assertEquals(Message::STATUS_SENT, $array['status']);
-        $this->assertNull($array['in_reply_to']);
-        $this->assertIsArray($array['replies']);
+        self::assertSame('Test message', $array['message']);
+        self::assertSame('Test User', $array['user']);
+        self::assertSame(Message::STATUS_SENT, $array['status']);
+        self::assertNull($array['in_reply_to']);
+        self::assertIsArray($array['replies']);
     }
 
     public function testToArrayWithInReplyTo(): void
@@ -109,7 +115,7 @@ class MessageTest extends TestCase
         $originalMessage->setContent('Original');
         $originalMessage->setUser($this->user);
 
-        $reflection = new \ReflectionClass($originalMessage);
+        $reflection = new ReflectionClass($originalMessage);
         $idProperty = $reflection->getProperty('id');
         $idProperty->setAccessible(true);
         $idProperty->setValue($originalMessage, 1);
@@ -121,22 +127,22 @@ class MessageTest extends TestCase
 
         $array = $replyMessage->toArray();
 
-        $this->assertEquals(1, $array['in_reply_to']);
+        self::assertSame(1, $array['in_reply_to']);
     }
 
     public function testStatusConstants(): void
     {
-        $this->assertEquals('sent', Message::STATUS_SENT);
-        $this->assertEquals('received', Message::STATUS_RECEIVED);
-        $this->assertEquals('pending', Message::STATUS_PENDING);
-        $this->assertEquals('failed', Message::STATUS_FAILED);
+        self::assertSame('sent', Message::STATUS_SENT);
+        self::assertSame('received', Message::STATUS_RECEIVED);
+        self::assertSame('pending', Message::STATUS_PENDING);
+        self::assertSame('failed', Message::STATUS_FAILED);
     }
 
     public function testDefaultStatus(): void
     {
         $message = new Message();
 
-        $this->assertEquals(Message::STATUS_SENT, $message->getStatus());
+        self::assertSame(Message::STATUS_SENT, $message->getStatus());
     }
 
     public function testFluentInterface(): void
@@ -146,11 +152,12 @@ class MessageTest extends TestCase
         $result = $message
             ->setContent('Test')
             ->setUser($this->user)
-            ->setStatus(Message::STATUS_PENDING);
+            ->setStatus(Message::STATUS_PENDING)
+        ;
 
-        $this->assertSame($message, $result);
-        $this->assertEquals('Test', $message->getContent());
-        $this->assertSame($this->user, $message->getUser());
-        $this->assertEquals(Message::STATUS_PENDING, $message->getStatus());
+        self::assertSame($message, $result);
+        self::assertSame('Test', $message->getContent());
+        self::assertSame($this->user, $message->getUser());
+        self::assertSame(Message::STATUS_PENDING, $message->getStatus());
     }
 }

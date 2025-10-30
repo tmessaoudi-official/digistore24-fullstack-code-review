@@ -1,0 +1,24 @@
+# Expose your documentation as JSON swagger compliant
+app.swagger_json:
+    path: /api/doc.json
+    methods: GET
+    defaults: { _controller: nelmio_api_doc.controller.swagger }
+
+# Expose your documentation as YAML
+app.swagger_yaml:
+    path: /api/doc.yaml
+    methods: GET
+    defaults: { _controller: nelmio_api_doc.controller.swagger, format: yaml }
+
+# Expose your documentation as YAML (alternative path)
+app.swagger:
+    path: /api/doc
+    methods: GET
+    defaults: { _controller: nelmio_api_doc.controller.swagger, format: yaml }
+
+# Swagger UI - Interactive documentation
+# Requires: composer require twig asset
+app.swagger_ui:
+    path: /api/doc/ui
+    methods: GET
+    defaults: { _controller: nelmio_api_doc.controller.swagger_ui }
